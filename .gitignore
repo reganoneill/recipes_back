@@ -1,0 +1,7 @@
+node_modules/
+public/
+dist/
+package-lock.json
+production.json
+
+/todo

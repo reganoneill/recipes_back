@@ -1,0 +1,13 @@
+[
+  {
+    "name": "reciperef_backend",
+    "script": "dist/index.js",
+    "env": {
+      "NODE_ENV": "development",
+      "DEBUG": "reciperef:*",
+      "PORT": 8083,
+      "NODE_APP_INSTANCE": "reciperef_dev",
+      "CLIENT_URL": "https://aktivation-local.space"
+    }
+  }
+]
