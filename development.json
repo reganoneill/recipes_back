@@ -4,6 +4,8 @@
     "script": "dist/index.js",
     "env": {
       "NODE_ENV": "development",
+      "JWT_SECRET": "supersecret",
+      "MONGO_LOCATION_DEV": "mongodb://localhost:27017/api",
       "DEBUG": "reciperef:*",
       "PORT": 8083,
       "NODE_APP_INSTANCE": "reciperef_dev",

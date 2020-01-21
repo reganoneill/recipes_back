@@ -3,7 +3,7 @@ import { json, urlencoded } from "body-parser";
 import morgan from "morgan";
 import config from "./config";
 import cors from "cors";
-import { signup, signin, protect } from "./utils/auth";
+import { signin, protect } from "./utils/auth";
 import userRouter from "./resources/user/user.router";
 import recipeRouter from "./resources/recipe/recipe.router";
 import { connect } from "./utils/db";
@@ -20,12 +20,10 @@ app.use(urlencoded({ extended: true }));
 
 app.use(morgan("dev"));
 
-app.post("/signup", signup);
-app.post("/signin", signin);
+app.post("/api/recipe/signin", signin);
 
-// TODO: implement protect logic
-// app.use('/api', protect)
-app.use("/api/user", userRouter);
+app.use("/api/recipe/auth", protect);
+app.use("/api/recipe/auth/user", userRouter);
 app.use("/api/recipe", recipeRouter);
 
 export const start = async () => {

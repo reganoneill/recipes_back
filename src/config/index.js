@@ -8,7 +8,7 @@ const baseConfig = {
   port: 8083,
   secrets: {
     jwt: process.env.JWT_SECRET,
-    jwtExp: "100d"
+    jwtExp: "1d"
   }
 };
 
@@ -18,6 +18,10 @@ switch (env) {
   case "dev":
   case "development":
     envConfig = require("./dev").config;
+    break;
+  case "prod":
+  case "production":
+    envConfig = require("./prod").config;
     break;
   default:
     envConfig = require("./dev").config;

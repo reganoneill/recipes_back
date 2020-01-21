@@ -3,15 +3,17 @@ import controllers from "./recipe.controllers";
 
 const router = Router();
 
-// /api/recipe
-router
-  .route("/")
-  .get(controllers.getMany)
-  .post(controllers.createOne);
-
-// /api/recipe/:id
+// non auth
+// /api/recipe && /api/recipe/:id
+router.route("/").get(controllers.getMany);
 router.route("/:id").get(controllers.getOne);
-//   .put(controllers.updateOne)
-//   .delete(controllers.removeOne);
+
+// auth required
+// /api/recipe/:id
+router.route("/auth").post(controllers.createOne);
+router
+  .route("/auth/:id")
+  .put(controllers.updateOne)
+  .delete(controllers.removeOne);
 
 export default router;
