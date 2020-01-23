@@ -6,7 +6,7 @@ const router = Router();
 // non auth
 // /api/recipe && /api/recipe/:id
 router.route("/").get(controllers.getMany);
-router.route("/:id").get(controllers.getOne);
+router.route("/:id").get(controllers.getOneById);
 
 // auth required
 // /api/recipe/:id
