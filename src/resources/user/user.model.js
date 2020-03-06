@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema(
         required: true,
         default: "dark"
       }
-    }
+    },
+    findHash: { type: String, unique: true }
   },
   { timestamps: true }
 );

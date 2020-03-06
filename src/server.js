@@ -3,7 +3,7 @@ import { json, urlencoded } from "body-parser";
 import morgan from "morgan";
 import config from "./config";
 import cors from "cors";
-import { signin, protect } from "./utils/auth";
+import { signin, signup, protect } from "./utils/auth";
 import userRouter from "./resources/user/user.router";
 import recipeRouter from "./resources/recipe/recipe.router";
 import { connect } from "./utils/db";
@@ -21,6 +21,7 @@ app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 app.post("/api/recipe/signin", signin);
+app.post("/api/recipe/signup", signup);
 
 app.use("/api/recipe/auth", protect);
 app.use("/api/recipe/auth/user", userRouter);

@@ -1,18 +1,44 @@
+const crypto = require("crypto");
 import config from "../config";
 import { User } from "../resources/user/user.model";
 import jwt from "jsonwebtoken";
 
-export const newToken = user => {
-  return jwt.sign({ id: user.id }, config.secrets.jwt, {
-    expiresIn: config.secrets.jwtExp
+export const generateNewToken = user => {
+  return new Promise((resolve, reject) => {
+    generateFindHash(user)
+      .then(findHash => {
+        resolve(
+          jwt.sign({ token: findHash }, config.secrets.jwt, {
+            expiresIn: config.secrets.jwtExp
+          })
+        );
+      })
+      .catch(err => reject(err));
+  });
+};
+
+export const generateFindHash = user => {
+  return new Promise((resolve, reject) => {
+    _generateFindHash(user);
+    function _generateFindHash(user) {
+      user.findHash = crypto.randomBytes(32).toString("hex");
+      user
+        .save()
+        .then(() => {
+          resolve(user.findHash);
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    }
   });
 };
 
 export const verifyToken = token =>
   new Promise((resolve, reject) => {
-    jwt.verify(token, config.secrets.jwt, (err, payload) => {
+    jwt.verify(token, config.secrets.jwt, (err, decoded) => {
       if (err) return reject(err);
-      resolve(payload);
+      resolve(decoded);
     });
   });
 
@@ -23,9 +49,11 @@ export const signup = async (req, res) => {
 
   try {
     const user = await User.create(req.body);
-    const token = newToken(user);
-    return res.status(201).send({ token });
+    generateNewToken(user).then(token => {
+      return res.status(201).send({ token });
+    });
   } catch (e) {
+    console.error("error: ", e);
     return res.status(500).end();
   }
 };
@@ -52,7 +80,7 @@ export const signin = async (req, res) => {
       return res.status(401).send(invalid);
     }
 
-    const token = newToken(user);
+    const token = generateNewToken(user);
     return res.status(201).send({ token });
   } catch (e) {
     console.error(e);
@@ -75,7 +103,7 @@ export const protect = async (req, res, next) => {
     return res.status(401).end();
   }
 
-  const user = await User.findById(payload.id)
+  const user = await User.findOne({ findHash: payload.token })
     .select("-password")
     .lean()
     .exec();
@@ -84,6 +112,8 @@ export const protect = async (req, res, next) => {
     console.error("no user");
     return res.status(401).end();
   }
+
+  console.log("got em:", user);
 
   req.user = user;
   next();
