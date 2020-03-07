@@ -66,24 +66,19 @@ export const signin = async (req, res) => {
   const invalid = { message: "Invalid email and password combination" };
 
   try {
-    const user = await User.findOne({ email: req.body.email })
-      .select("email password")
-      .exec();
-
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(401).send(invalid);
     }
-
     const match = await user.checkPassword(req.body.password);
-
     if (!match) {
       return res.status(401).send(invalid);
     }
 
-    const token = generateNewToken(user);
-    return res.status(201).send({ token });
+    generateNewToken(user).then(token => {
+      return res.status(201).send({ token });
+    });
   } catch (e) {
-    console.error(e);
     res.status(500).end();
   }
 };
@@ -112,9 +107,6 @@ export const protect = async (req, res, next) => {
     console.error("no user");
     return res.status(401).end();
   }
-
-  console.log("got em:", user);
-
   req.user = user;
   next();
 };
